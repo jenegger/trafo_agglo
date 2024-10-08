@@ -69,7 +69,9 @@ def run_threshold_finding(distance_weight,time_weight):
                 
                 cart_e3 = sph2cart(E_3[:,1],E_3[:,0],time_weight*E_3[:,2],E_3[:,3])
                 np_cart_e3 = np.asarray(cart_e3)
+                print ("np_cart_e3:\t", np_cart_e3)
                 np_cart_e3 = np.transpose(np_cart_e3)
+                print ("np_cart_e3 transposed:\t", np_cart_e3)
         
                 #create flat arrays for the 3 clusters to compare later with the reconstructed clusters
                 arr_energy1 = np_cart_e1[:,3]
@@ -100,7 +102,7 @@ def run_threshold_finding(distance_weight,time_weight):
                 #clustering_model = AgglomerativeClustering(n_clusters=3, linkage="ward")
                 #clustering_model.fit(data)
                 output = fclusterdata(data, t=distance_weight, criterion='distance',method="ward")
-                #print("this is the output",output)
+                print("this is the output",output)
                 #print("this is X:" ,X)
                 nr_clusters = len(np.unique(output))    
                 array_energy_cluster = np.zeros(nr_clusters)
@@ -129,15 +131,20 @@ def run_threshold_finding(distance_weight,time_weight):
                                         anal_list_of_energies[j] = [-1]
 
 		####new part creating data with only correctly reco clusters and false negatives
-		false_positive = False
-                if (len(arr_reconstructed_clusters) >= len(list_of_energies)):
-		     for i in range(len(arr_reconstructed_clusters)):
-                         for j in range(len(list_of_energies)):
-			     if (sorted(arr_reconstructed_clusters[i],reverse=True)[0] ==sorted(list_of_energies[j],reverse=True)[0]:
-			         #check for whole lenght of arr_recon.. if same as list_of energies
+        #false_positive = False
+        #        if (len(arr_reconstructed_clusters) >= len(list_of_energies)):
+		#     for i in range(len(arr_reconstructed_clusters)):
+        #                 for j in range(len(list_of_energies)):
+		#	     if (sorted(arr_reconstructed_clusters[i],reverse=True)[0] ==sorted(list_of_energies[j],reverse=True)[0]:
+		#	         #check for whole lenght of arr_recon.. if same as list_of energies
 
-		if false positive is false - > fill dataset...
-		################################################################################
+		#if false positive is false - > fill dataset...
+
+
+	    ##ok, first I have to convert it in to cartesian coordinates x,y,z,(unitary),time, energy - > do this above
+		##then find center of mass of the clusters and use them as new entries for dataset
+
+		#################################################################################
                                         
         
                 ##this part is for giving numbers to the wrongly identified clusters
