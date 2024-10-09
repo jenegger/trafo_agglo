@@ -75,7 +75,7 @@ def run_threshold_finding(distance_weight,time_weight):
 	all_counts = len(array_unique_events)
 	j = 0
 	#for i in range(0,(len(array_unique_events)-3),3):
-	for i in range(0,7,3):
+	for i in range(0,3,3):
 		E1 = my_data[my_data[:,0] == array_unique_events[i]]
 		E2 = my_data[my_data[:,0] == array_unique_events[i+1]]
 		E3 = my_data[my_data[:,0] == array_unique_events[i+2]]
@@ -102,11 +102,14 @@ def run_threshold_finding(distance_weight,time_weight):
 			clusternr = full_events_cluster[0][-1]
 			temp_cluster_hits = full_events_cluster[full_events_cluster[:,-1] == clusternr]
 			cm_cluster = func_cm(temp_cluster_hits)
-			#cm_cluster_sph = uni_cart2sph #todo check that indexing goes right
-			#summarized_clusters_list.append(cm_cluster_sph)	
+			print(cm_cluster.shape)
+			cm_cluster_sph = uni_cart2sph(cm_cluster[0],cm_cluster[1],cm_cluster[2],cm_cluster[3],cm_cluster[4],cm_cluster[5]) #todo check that indexing goes right
+			summarized_clusters_list.append(cm_cluster_sph)	
 			full_events_cluster = full_events_cluster[full_events_cluster[:,-1] != clusternr]			
+		print(summarized_clusters_list)
 			
 				
+
 
 
 
