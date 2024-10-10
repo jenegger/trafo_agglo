@@ -74,50 +74,58 @@ def run_threshold_finding(distance_weight,time_weight):
 	summed_false_positive = 0.      
 	all_counts = len(array_unique_events)
 	j = 0
-	#for i in range(0,(len(array_unique_events)-3),3):
-	for i in range(0,3,3):
-		E1 = my_data[my_data[:,0] == array_unique_events[i]]
-		E2 = my_data[my_data[:,0] == array_unique_events[i+1]]
-		E3 = my_data[my_data[:,0] == array_unique_events[i+2]]
-		cart_e1 = np.transpose(sph2cart(E1[:,1],E1[:,2],E1[:,3],E1[:,4]))
-		cart_e2 = np.transpose(sph2cart(E2[:,1],E2[:,2],E2[:,3],E2[:,4]))
-		cart_e3 = np.transpose(sph2cart(E3[:,1],E3[:,2],E3[:,3],E3[:,4]))
-		#print(cart_e1)
-		data = pd.DataFrame(np.vstack([cart_e1,cart_e2,cart_e3]), columns = ['x','y','z','energy'])
-		output = fclusterdata(data, t=distance_weight, criterion='distance',method="ward")
-		##selection criteria- TODO: add
-		E1[:,0] = j
-		E2[:,0] = j+1
-		E3[:,0] = j+2
-		j += 3
-		full_cart1 = np.transpose(uni_sph2cart(E1[:,0],E1[:,1],E1[:,2],E1[:,3],E1[:,4])) 
-		full_cart2 = np.transpose(uni_sph2cart(E2[:,0],E2[:,1],E2[:,2],E2[:,3],E2[:,4])) 
-		full_cart3 = np.transpose(uni_sph2cart(E3[:,0],E3[:,1],E3[:,2],E3[:,3],E3[:,4])) 
-		full_events = np.vstack([full_cart1,full_cart2,full_cart3])
-		output = np.reshape(output,(-1,1))	
-		full_events_cluster = np.append(full_events,output,axis=1)
-		summarized_clusters_list = []
-		print(full_events_cluster)
-		while full_events_cluster.shape[0]:
-			clusternr = full_events_cluster[0][-1]
-			temp_cluster_hits = full_events_cluster[full_events_cluster[:,-1] == clusternr]
-			cm_cluster = func_cm(temp_cluster_hits)
-			print(cm_cluster.shape)
-			cm_cluster_sph = uni_cart2sph(cm_cluster[0],cm_cluster[1],cm_cluster[2],cm_cluster[3],cm_cluster[4],cm_cluster[5]) #todo check that indexing goes right
-			summarized_clusters_list.append(cm_cluster_sph)	
-			full_events_cluster = full_events_cluster[full_events_cluster[:,-1] != clusternr]			
-		print(summarized_clusters_list)
-			
-				
-
-
+	#Opening a file
+	with open('file.txt','w') as f:
+		for i in range(0,(len(array_unique_events)-3),3):
+		#for i in range(0,3,3):
+			E1 = my_data[my_data[:,0] == array_unique_events[i]]
+			E2 = my_data[my_data[:,0] == array_unique_events[i+1]]
+			E3 = my_data[my_data[:,0] == array_unique_events[i+2]]
+			cart_e1 = np.transpose(sph2cart(E1[:,1],E1[:,2],E1[:,3],E1[:,4]))
+			cart_e2 = np.transpose(sph2cart(E2[:,1],E2[:,2],E2[:,3],E2[:,4]))
+			cart_e3 = np.transpose(sph2cart(E3[:,1],E3[:,2],E3[:,3],E3[:,4]))
+			#print(cart_e1)
+			data = pd.DataFrame(np.vstack([cart_e1,cart_e2,cart_e3]), columns = ['x','y','z','energy'])
+			output = fclusterdata(data, t=distance_weight, criterion='distance',method="ward")
+			nr_reco_cluster = np.max(output)
+			print(output)
+			print(type(output))
+			##selection criteria- TODO: add
+			E1[:,0] = j
+			E2[:,0] = j+1
+			E3[:,0] = j+2
+			full_cart1 = np.transpose(uni_sph2cart(E1[:,0],E1[:,1],E1[:,2],E1[:,3],E1[:,4])) 
+			full_cart2 = np.transpose(uni_sph2cart(E2[:,0],E2[:,1],E2[:,2],E2[:,3],E2[:,4])) 
+			full_cart3 = np.transpose(uni_sph2cart(E3[:,0],E3[:,1],E3[:,2],E3[:,3],E3[:,4])) 
+			full_events = np.vstack([full_cart1,full_cart2,full_cart3])
+			output = np.reshape(output,(-1,1))	
+			full_events_cluster = np.append(full_events,output,axis=1)
+			######make here selection criteria, no false positive
+			false_positive = False
+			for k in range(1,nr_reco_cluster+1):
+				temp_reco_cluster = full_events_cluster[full_events_cluster[:,-1] == k]
+				print(temp_reco_cluster.shape[0])
+				for l in range(temp_reco_cluster.shape[0]):
+					print(l)
+					if (temp_reco_cluster[l,0] != temp_reco_cluster[0,0]):
+						false_positive = True
+			#####################################################
+			if (false_positive is False):
+				j += 3
+				summarized_clusters_list = []
+				#print(full_events_cluster)
+				while full_events_cluster.shape[0]:
+					clusternr = full_events_cluster[0][-1]
+					temp_cluster_hits = full_events_cluster[full_events_cluster[:,-1] == clusternr]
+					cm_cluster = func_cm(temp_cluster_hits)
+					#print(cm_cluster.shape)
+					cm_cluster_sph = uni_cart2sph(cm_cluster[0],cm_cluster[1],cm_cluster[2],cm_cluster[3],cm_cluster[4],cm_cluster[5]) 
+					summarized_clusters_list.append(cm_cluster_sph)	
+					full_events_cluster = full_events_cluster[full_events_cluster[:,-1] != clusternr]			
+				for i in range(len(summarized_clusters_list)):
+					fmt = "%1.f %f %f %f %f"
+					np.savetxt(f, summarized_clusters_list[i].reshape(1, -1), fmt=fmt,delimiter=",")
 
 
 if __name__ == "__main__":
 	run_threshold_finding(3540,5)
-
-
-
-
-
-
