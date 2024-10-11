@@ -12,7 +12,8 @@ from sklearn.cluster import AgglomerativeClustering
 from scipy.cluster import hierarchy
 from numpy import genfromtxt
 from scipy.cluster.hierarchy import fclusterdata
-my_data = genfromtxt('data_stream_2121.txt', delimiter=',')
+#my_data = genfromtxt('data_stream_2121.txt', delimiter=',')
+my_data = genfromtxt('data_stream_mult1_sim_out0.002124_window_0.000000.csv', delimiter=',')
 #just make positive time in data
 my_data[:,4] = my_data[:,4]+4500
 ### structure of mydata : eventnr, energy, theta, phi, hit-time
@@ -53,7 +54,7 @@ def cart2sph(x, y, z, energy):
 	return np.array([th,az,r,energy])
 
 def func_cm(data):
-	print(data[:,0])
+	#print(data[:,0])
 	assert np.all(data[:, 0] == data[0, 0]) == True
 	positions = data[:,1:4]
 	masses = data[:,4]
@@ -88,8 +89,8 @@ def run_threshold_finding(distance_weight,time_weight):
 			data = pd.DataFrame(np.vstack([cart_e1,cart_e2,cart_e3]), columns = ['x','y','z','energy'])
 			output = fclusterdata(data, t=distance_weight, criterion='distance',method="ward")
 			nr_reco_cluster = np.max(output)
-			print(output)
-			print(type(output))
+			#print(output)
+			#print(type(output))
 			##selection criteria- TODO: add
 			E1[:,0] = j
 			E2[:,0] = j+1
@@ -102,15 +103,18 @@ def run_threshold_finding(distance_weight,time_weight):
 			full_events_cluster = np.append(full_events,output,axis=1)
 			######make here selection criteria, no false positive
 			false_positive = False
+			exact_three_clusters = False
 			for k in range(1,nr_reco_cluster+1):
 				temp_reco_cluster = full_events_cluster[full_events_cluster[:,-1] == k]
-				print(temp_reco_cluster.shape[0])
+				#print(temp_reco_cluster.shape[0])
 				for l in range(temp_reco_cluster.shape[0]):
-					print(l)
+					#print(l)
 					if (temp_reco_cluster[l,0] != temp_reco_cluster[0,0]):
 						false_positive = True
+			if (nr_reco_cluster == 3):
+				exact_three_clusters = True
 			#####################################################
-			if (false_positive is False):
+			if (false_positive is False and exact_three_clusters is False):
 				j += 3
 				summarized_clusters_list = []
 				#print(full_events_cluster)
@@ -123,7 +127,7 @@ def run_threshold_finding(distance_weight,time_weight):
 					summarized_clusters_list.append(cm_cluster_sph)	
 					full_events_cluster = full_events_cluster[full_events_cluster[:,-1] != clusternr]			
 				for i in range(len(summarized_clusters_list)):
-					fmt = "%1.f %f %f %f %f"
+					fmt = "%1.f,%f,%f,%f,%f"
 					np.savetxt(f, summarized_clusters_list[i].reshape(1, -1), fmt=fmt,delimiter=",")
 
 
