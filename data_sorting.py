@@ -11,6 +11,7 @@ import torch.optim as optim
 from data_shaping import create_data
 from transform_model import transformer_model
 from transform_model import transformer_model_extended
+from transform_model import feed_forward_model
 from matplotlib import pyplot as plt
 from r3bmodel import r3bmodel
 from idea import energy_clusters
@@ -63,14 +64,14 @@ bs = 64
 dataset = CustomDataset()
 dloader = DataLoader(dataset,batch_size=bs,shuffle=False,collate_fn=dynamic_length_collate)
 #epoch-iteration infos ----
-n_epochs = 10
+n_epochs = 1000
 total_samples = len(dataset)
 n_iterations = math.ceil(total_samples/bs)
 print (total_samples,n_iterations)
 #--------------------------
 
 # Train the model
-model = "pytorch_model"  #there are the "homemade" model and the "pytorch_model"
+model = "feed_forward"  #there are the "homemade" model and the "pytorch_model" and "feed_forward"
 lf = "bce_only" #there are the options "logit" and "bce_only"
 
 dtype = torch.float32
@@ -82,12 +83,14 @@ if (model == "homemade"):
 	transformer_model = transformer_model(feature_nr)
 if (model == "pytorch_model"):
 	transformer_model = transformer_model_extended(feature_nr)
+if (model == "feed_forward"):
+	transformer_model = feed_forward_model(feature_nr)
 if (lf == "logit"):
 	loss_fn = nn.BCEWithLogitsLoss()
 if (lf == "bce_only"):
 	loss_fn = nn.BCELoss()
 	
-if (model == "homemade" or model == "pytorch_model"):
+if (model == "homemade" or model == "pytorch_model" or model == "feed_forward"):
 	optimizer = optim.SGD(transformer_model.parameters(),lr=loss_rate)
 	transformer_model.train()
 l_loss = []
@@ -99,10 +102,14 @@ for epoch in range(n_epochs):
 		if (model == "homemade"):
 			y_pred = transformer_model(X_batch,in_hitnr)
 			y_true = target[:in_hitnr,:in_hitnr]
-		if (model == "pytorch_model"):
+		if (model == "pytorch_model" or model == "feed_forward"):
+			print("this is the shape of the input:")
+			print(X_batch.shape)
 			y_pred = transformer_model(X_batch,in_hitnr)
 			torch.set_printoptions(threshold=10000)
 			y_true = target
+			print("shape of y predicted:",y_pred.shape)
+			print("shape of y true:",y_true.shape)
 		if (model == "r3bmodel"):
 			y_pred = r3bmodel(X_batch,0.25).float()
 			y_true = target.float()
@@ -125,12 +132,12 @@ for epoch in range(n_epochs):
 
 		##end of checks
 		loss  = loss_fn(y_pred,y_true)
-		if (model == "homemade" or model == "pytorch_model"):
+		if (model == "homemade" or model == "pytorch_model" or model == "feed_forward"):
 			optimizer.zero_grad()
 			loss.backward()
 			optimizer.step()
 		l_loss.append(loss.item())
-		if (model == "homemade" or model == "pytorch_model"):
+		if (model == "homemade" or model == "pytorch_model" or model == "feed_forward"):
 			torch.save(transformer_model,'model_scripted.pt') # Save
 
 #mean_loss = statistics.mean(l_loss[1500:])
@@ -150,44 +157,74 @@ import itertools
 #plt.hist(merged,bins=100)
 #plt.show()
 #here I evaluate the model
-if (model == "homemade" or model == "pytorch_model"):
-	transformer_model = torch.load('model_scripted.pt')
-	transformer_model.eval()
-for cut in range(500,1000,25):
+if (model == "homemade" or model == "pytorch_model" or model == "feed_forward"):
+	with torch.no_grad():
+		transformer_model = torch.load('model_scripted.pt')
+		transformer_model.eval()
+#for cut in range(500,1000,25):
+for cut in range(200,700,25): #this is for the feed forward method, since no values above 0.5
 #for cut in range(500,501):
 	cut = cut/1000.
 	reco_list = []
 	true_list = []
+	single_hit_list = []
+	class1 = []
+	class0 = []
 	for i,(X_batch,target,in_hitnr) in enumerate(dloader):
 
 		if (model == "homemade"):
 			y_pred = transformer_model(X_batch,in_hitnr)
 			y_true = target[:in_hitnr,:in_hitnr]
-		if (model == "pytorch_model"):
+		if (model == "pytorch_model" or model == "feed_forward"):
 			y_pred = transformer_model(X_batch,in_hitnr)
 			torch.set_printoptions(threshold=10000)
 			y_true = target
+			print("y_pred")
+			print(y_pred)
 		if (model == "r3bmodel"):
 			y_pred = r3bmodel(X_batch,0.25).float()
 			y_true = target.float()
 		upper_tri_mask = torch.triu(torch.ones(((torch.max(in_hitnr)).type(torch.int64),(torch.max(in_hitnr).type(torch.int64)))),diagonal=1).bool()
 		y_true = y_true[:,upper_tri_mask]
+		y_single_hit = target
+		zero_mask = torch.zeros((torch.max(in_hitnr)).type(torch.int64),(torch.max(in_hitnr)).type(torch.int64)).bool()
+		y_single_hit = y_single_hit[:,zero_mask]
+		y_single_hit = []
 		for l in range(X_batch.shape[0]):	
 			data_test = X_batch[l,:,:]
 			comb_test = y_pred[l,:]
 			idea_test = energy_clusters(comb_test,data_test,cut)
 			true_test = energy_clusters(y_true[l,:],data_test,cut)
+			y_single_hit = torch.zeros(y_true[l,:].shape)
+			single_hit_test = energy_clusters(y_single_hit,data_test,cut)
 			reco_list.append(idea_test)
 			true_list.append(true_test)
+			single_hit_list.append(single_hit_test)
+			for m in range(y_true[l,:].shape[0]):
+				classes = y_true[l,:]
+				if classes[m] == 1. :
+					class1.append(comb_test[m].detach().item())
+				else:
+					class0.append(comb_test[m].detach().item())	
 	merged = list(itertools.chain.from_iterable(reco_list))
 	merged_true = list(itertools.chain.from_iterable(true_list))
+	merged_single_hit = list(itertools.chain.from_iterable(single_hit_list))
 	plt.hist(merged,bins=100,range=(0,8),label=model,color="green",alpha=0.5)
 	plt.hist(merged_true,bins=100,range=(0,8),label="true",color="black",alpha=0.5)
+	plt.hist(merged_single_hit,bins=100,range=(0,8),label="single clusters",facecolor='none',edgecolor = "red",linewidth=0.5)
 	plt.legend()
 	titlename = "cutting edge at" + str(cut)
 	plt.title(titlename)
 	plt.yscale('log')
 	plot_name = str(model)+str("_")+ str(n_epochs) + str("_") +str(cut)+str(".png")
 	plt.savefig(plot_name,dpi=300)
+	plt.clf()
+
+	list_class1 = list(class1)
+	list_class0 = list(class0)
+	plt.hist(list_class1,bins=100,range=(0,1),label="belonging together",color="red",alpha=0.5)
+	plt.hist(list_class0,bins=100,range=(0,1),label="independent",color="blue",alpha=0.5)
+	plt.legend()
+	plt.savefig("class_distributions.png")
 	plt.clf()
 	#plt.show()

@@ -3,6 +3,7 @@ import math
 import torch
 from torch import nn
 import torch.nn.functional as F
+from itertools import combinations
 
 class transformer_model(nn.Module):
 	def __init__(self, k, heads=8, mask=False):
@@ -106,11 +107,35 @@ class transformer_model_extended(nn.Module):
 
 
 
+class feed_forward_model(nn.Module):
+	def __init__(self, features, heads=8, mask=False):
+		super().__init__()
+		self.linear = torch.nn.Linear(8,10000)
+		self.another_linear = torch.nn.Linear(10000,10000)
+		self.activation = torch.nn.ReLU()
+		self.linear_back = torch.nn.Linear(10000,1)
 
+	def forward(self, x,in_hitnr):
+		num_vectors = x.shape[1]
+		batch_size = x.shape[0]
+		pair_indices = list(combinations(range(num_vectors), 2))
+		num_pairs = len(pair_indices)
+		output_tensor = torch.zeros(batch_size, num_pairs, 8)
+		for i, (idx1, idx2) in enumerate(pair_indices):
+		# Add the vectors from the input tensor based on pair indices
+			combined_features = torch.cat((x[:, idx1], x[:, idx2]), dim=-1)
+			output_tensor[:, i] = combined_features
+		print("the shape of output tensor:")
+		print(output_tensor.shape)
+		output_tensor = self.linear(output_tensor)
+		output_tensor = self.another_linear(output_tensor) 
+		output_tensor = self.activation(output_tensor)
+		output_tensor = self.linear_back(output_tensor)
+		output_tensor = torch.sigmoid(output_tensor)
+		output_tensor = torch.squeeze(output_tensor)
+		return output_tensor
 
-
-
-
+		
 
 
 

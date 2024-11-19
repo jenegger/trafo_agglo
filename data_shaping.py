@@ -9,7 +9,8 @@ from numpy import genfromtxt
 def create_data():
 	#read from file
 	#my_data = genfromtxt('data_stream_2121.txt', delimiter=',')
-	my_data = genfromtxt('file.txt', delimiter=',')
+	#my_data = genfromtxt('file.txt', delimiter=',')
+	my_data = genfromtxt('small_file.txt', delimiter=',')
 	#normalize data
 	my_data[:,4] =(my_data[:,4]-np.min(my_data[:,4]))/(np.max(my_data[:,4])-np.min(my_data[:,4]))
 	#my_data[:,1] =(my_data[:,1]-np.min(my_data[:,1]))/(np.max(my_data[:,1])-np.min(my_data[:,1]))
