@@ -22,7 +22,8 @@ my_data = my_data*[1.,1.,3.14159/180,3.14159/180,1.]
 num_rows, num_cols = my_data.shape
 
 
-def uni_sph2cart(eventnr,energy,az, el,time):
+#def uni_sph2cart(eventnr,energy,az, el,time): original one, but I think I messed up with the theta and phi coordinates...
+def uni_sph2cart(eventnr,energy,el,az,time):
 	r = 1
 	rsin_theta = r*np.sin(el)
 	x = rsin_theta*np.cos(az)
@@ -38,7 +39,8 @@ def uni_cart2sph(eventnr,x, y, z, energy,time):
 	return np.array([eventnr,energy,th,az,time])
 
 ##this definitions are used when using time as radius
-def sph2cart(energy,az, el,time):
+#def sph2cart(energy,az, el,time): original one, but I think I messed up with the theta and phi coordinates...
+def sph2cart(energy,el,az,time):
 	r = time
 	rsin_theta = r*np.sin(el)
 	x = rsin_theta*np.cos(az)
@@ -76,16 +78,18 @@ def run_threshold_finding(distance_weight,time_weight):
 	all_counts = len(array_unique_events)
 	j = 0
 	#Opening a file
-	with open('file.txt','w') as f:
+	#with open('file.txt','w') as f:
+	with open('test_output_false_negative.txt','w') as f:
 		for i in range(0,(len(array_unique_events)-3),3):
 		#for i in range(0,3,3):
 			E1 = my_data[my_data[:,0] == array_unique_events[i]]
 			E2 = my_data[my_data[:,0] == array_unique_events[i+1]]
 			E3 = my_data[my_data[:,0] == array_unique_events[i+2]]
+			print("THIS IS E1 !!!!")
+			print(E1)
 			cart_e1 = np.transpose(sph2cart(E1[:,1],E1[:,2],E1[:,3],E1[:,4]))
 			cart_e2 = np.transpose(sph2cart(E2[:,1],E2[:,2],E2[:,3],E2[:,4]))
 			cart_e3 = np.transpose(sph2cart(E3[:,1],E3[:,2],E3[:,3],E3[:,4]))
-			#print(cart_e1)
 			data = pd.DataFrame(np.vstack([cart_e1,cart_e2,cart_e3]), columns = ['x','y','z','energy'])
 			output = fclusterdata(data, t=distance_weight, criterion='distance',method="ward")
 			nr_reco_cluster = np.max(output)
@@ -101,6 +105,9 @@ def run_threshold_finding(distance_weight,time_weight):
 			full_events = np.vstack([full_cart1,full_cart2,full_cart3])
 			output = np.reshape(output,(-1,1))	
 			full_events_cluster = np.append(full_events,output,axis=1)
+			#print("----- begin full cluster ----")
+			#print(full_events_cluster)
+			#print("----- end full cluster   ----")
 			######make here selection criteria, no false positive
 			false_positive = False
 			exact_three_clusters = False

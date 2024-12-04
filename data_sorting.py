@@ -64,7 +64,7 @@ bs = 64
 dataset = CustomDataset()
 dloader = DataLoader(dataset,batch_size=bs,shuffle=False,collate_fn=dynamic_length_collate)
 #epoch-iteration infos ----
-n_epochs = 1000
+n_epochs = 10
 total_samples = len(dataset)
 n_iterations = math.ceil(total_samples/bs)
 print (total_samples,n_iterations)
