@@ -110,10 +110,10 @@ class transformer_model_extended(nn.Module):
 class feed_forward_model(nn.Module):
 	def __init__(self, features, heads=8, mask=False):
 		super().__init__()
-		self.linear = torch.nn.Linear(8,10000)
-		self.another_linear = torch.nn.Linear(10000,10000)
+		self.linear = torch.nn.Linear(8,100)
+		self.another_linear = torch.nn.Linear(100,100)
 		self.activation = torch.nn.ReLU()
-		self.linear_back = torch.nn.Linear(10000,1)
+		self.linear_back = torch.nn.Linear(100,1)
 
 	def forward(self, x,in_hitnr):
 		num_vectors = x.shape[1]
