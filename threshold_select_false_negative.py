@@ -79,7 +79,7 @@ def run_threshold_finding(distance_weight,time_weight):
 	j = 0
 	#Opening a file
 	#with open('file.txt','w') as f:
-	with open('test_output_false_negative.txt','w') as f:
+	with open('all_output_false_negative.txt','w') as f:
 		for i in range(0,(len(array_unique_events)-3),3):
 		#for i in range(0,3,3):
 			E1 = my_data[my_data[:,0] == array_unique_events[i]]
