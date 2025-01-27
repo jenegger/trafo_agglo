@@ -79,19 +79,22 @@ def run_threshold_finding(distance_weight,time_weight):
 	j = 0
 	#Opening a file
 	#with open('file.txt','w') as f:
-	with open('all_output_false_negative.txt','w') as f:
+	#with open('all_output_false_negative.txt','w') as f:
+	with open('fooo.txt','w') as f:
 		for i in range(0,(len(array_unique_events)-3),3):
 		#for i in range(0,3,3):
 			E1 = my_data[my_data[:,0] == array_unique_events[i]]
 			E2 = my_data[my_data[:,0] == array_unique_events[i+1]]
 			E3 = my_data[my_data[:,0] == array_unique_events[i+2]]
-			print("THIS IS E1 !!!!")
-			print(E1)
+			#print("THIS IS E1 !!!!")
+			#print(E1)
 			cart_e1 = np.transpose(sph2cart(E1[:,1],E1[:,2],E1[:,3],E1[:,4]))
 			cart_e2 = np.transpose(sph2cart(E2[:,1],E2[:,2],E2[:,3],E2[:,4]))
 			cart_e3 = np.transpose(sph2cart(E3[:,1],E3[:,2],E3[:,3],E3[:,4]))
+			print(np.vstack([cart_e1,cart_e2,cart_e3]))
 			data = pd.DataFrame(np.vstack([cart_e1,cart_e2,cart_e3]), columns = ['x','y','z','energy'])
 			output = fclusterdata(data, t=distance_weight, criterion='distance',method="ward")
+			print("this is the output:\t",output)
 			nr_reco_cluster = np.max(output)
 			#print(output)
 			#print(type(output))
