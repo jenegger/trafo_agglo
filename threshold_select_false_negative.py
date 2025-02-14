@@ -13,7 +13,8 @@ from scipy.cluster import hierarchy
 from numpy import genfromtxt
 from scipy.cluster.hierarchy import fclusterdata
 #my_data = genfromtxt('data_stream_2121.txt', delimiter=',')
-my_data = genfromtxt('data_stream_mult1_sim_out0.002124_window_0.000000.csv', delimiter=',')
+#my_data = genfromtxt('data_stream_mult1_sim_out0.002124_window_0.000000.csv', delimiter=',')
+my_data = genfromtxt('data_stream_mult1_sim_uniform_window_0_3_10mev_0.000000.csv', delimiter=',')
 #just make positive time in data
 my_data[:,4] = my_data[:,4]+4500
 ### structure of mydata : eventnr, energy, theta, phi, hit-time
@@ -80,7 +81,8 @@ def run_threshold_finding(distance_weight,time_weight):
 	#Opening a file
 	#with open('file.txt','w') as f:
 	#with open('all_output_false_negative.txt','w') as f:
-	with open('fooo.txt','w') as f:
+	#with open('fooo.txt','w') as f:
+	with open('all_output_false_negative_uniform_03_10mev.txt','w') as f:
 		for i in range(0,(len(array_unique_events)-3),3):
 		#for i in range(0,3,3):
 			E1 = my_data[my_data[:,0] == array_unique_events[i]]
