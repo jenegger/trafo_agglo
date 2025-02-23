@@ -1,0 +1,93 @@
+2.1MeV DATA---------------
+R3BModel:
+well reco... 0.8582857989480702
+---more statistics....---
+fully true_reco_cluster:	 0.7184444444444444
+false positive events:	 0.060444444444444446
+false negative events:	 0.15866666666666668
+mixed false events:	 0.06244444444444444
+
+Agglo Model:
+well reco... 0.8912512037928736
+---more statistics....---
+fully true_reco_cluster:	 0.7602222222222222
+false positive events:	 0.051111111111111114
+false negative events:	 0.17044444444444445
+mixed false events:	 0.018222222222222223
+
+Edge only model (with time):
+well reco... 0.9340691903103934
+---more statistics....---
+fully true_reco_cluster:	 0.8415555555555555
+false positive events:	 0.027555555555555555
+false negative events:	 0.12377777777777778
+mixed false events:	 0.0071111111111111115
+
+Edge only model (NO time):
+well reco... 0.882732054226239
+---more statistics....---
+fully true_reco_cluster:	 0.7371111111111112
+false positive events:	 0.05511111111111111
+false negative events:	 0.19088888888888889
+mixed false events:	 0.016888888888888887
+
+
+Agglo + Edge (with time) - Version1:
+well reco... 0.7935402622416475
+---more statistics....---
+fully true_reco_cluster:	 0.6972660591242499
+false positive events:	 0.2740609024227606
+false negative events:	 0.019559902200488997
+mixed false events:	 0.009113136252500556
+
+Agglo + Edge (with time) - Version2:
+well reco... 0.9281428253944737
+---more statistics....---
+fully true_reco_cluster:	 0.8710824627695043
+false positive events:	 0.06379195376750389
+false negative events:	 0.047788397421649254
+mixed false events:	 0.01733718604134252
+
+
+NOW THE UNIFORM DATA from 0.3 to 10 MeV
+R3BModel:
+well reco... 0.7983798379837984
+---more statistics....---
+fully true_reco_cluster:	 0.5997599759975998
+false positive events:	 0.058205820582058206
+false negative events:	 0.25052505250525053
+mixed false events:	 0.09150915091509151
+
+Agglo Model:
+well reco... 0.8387838783878387
+---more statistics....---
+fully true_reco_cluster:	 0.6312631263126313
+false positive events:	 0.033903390339033904
+false negative events:	 0.3108310831083108
+mixed false events:	 0.024002400240024
+
+Edge only model (with time):
+well reco... 0.8847884788478848
+---more statistics....---
+fully true_reco_cluster:	 0.7500750075007501
+false positive events:	 0.054605460546054606
+false negative events:	 0.17371737173717372
+mixed false events:	 0.021602160216021602
+
+
+Agglo + Edge (with time) - Version1:
+well reco... 0.8417841784178418
+---more statistics....---
+fully true_reco_cluster:	 0.678067806780678
+false positive events:	 0.08430843084308431
+false negative events:	 0.20432043204320433
+mixed false events:	 0.0333033303330333
+
+Agglo + Edge (with time) - Version2:
+well reco... 0.8501850185018501
+---more statistics....---
+fully true_reco_cluster:	 0.6621662166216622
+false positive events:	 0.0405040504050405
+false negative events:	 0.2721272127212721
+mixed false events:	 0.025202520252025202
+
