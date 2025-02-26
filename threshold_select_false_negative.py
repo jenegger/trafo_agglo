@@ -14,7 +14,8 @@ from numpy import genfromtxt
 from scipy.cluster.hierarchy import fclusterdata
 #my_data = genfromtxt('data_stream_2121.txt', delimiter=',')
 #my_data = genfromtxt('data_stream_mult1_sim_out0.002124_window_0.000000.csv', delimiter=',')
-my_data = genfromtxt('data_stream_mult1_sim_uniform_window_0_3_10mev_0.000000.csv', delimiter=',')
+#my_data = genfromtxt('data_stream_mult1_sim_uniform_window_0_3_10mev_0.000000.csv', delimiter=',')
+my_data = genfromtxt('automatic_evt_sel.txt', delimiter=',')
 #just make positive time in data
 my_data[:,4] = my_data[:,4]+4500
 ### structure of mydata : eventnr, energy, theta, phi, hit-time
@@ -82,17 +83,18 @@ def run_threshold_finding(distance_weight,time_weight):
 	#with open('file.txt','w') as f:
 	#with open('all_output_false_negative.txt','w') as f:
 	#with open('fooo.txt','w') as f:
-	with open('all_output_false_negative_uniform_03_10mev.txt','w') as f:
-		for i in range(0,(len(array_unique_events)-3),3):
+	#with open('all_output_false_negative_uniform_03_10mev.txt','w') as f:
+	with open('bbbbbb.txt','w') as f:
+		for i in range(0,(len(array_unique_events)+1)%3,3):
 		#for i in range(0,3,3):
 			E1 = my_data[my_data[:,0] == array_unique_events[i]]
 			E2 = my_data[my_data[:,0] == array_unique_events[i+1]]
 			E3 = my_data[my_data[:,0] == array_unique_events[i+2]]
 			#print("THIS IS E1 !!!!")
 			#print(E1)
-			cart_e1 = np.transpose(sph2cart(E1[:,1],E1[:,2],E1[:,3],E1[:,4]))
-			cart_e2 = np.transpose(sph2cart(E2[:,1],E2[:,2],E2[:,3],E2[:,4]))
-			cart_e3 = np.transpose(sph2cart(E3[:,1],E3[:,2],E3[:,3],E3[:,4]))
+			cart_e1 = np.transpose(sph2cart(E1[:,1],E1[:,2],E1[:,3],2.5*E1[:,4]))
+			cart_e2 = np.transpose(sph2cart(E2[:,1],E2[:,2],E2[:,3],2.5*E2[:,4]))
+			cart_e3 = np.transpose(sph2cart(E3[:,1],E3[:,2],E3[:,3],2.5*E3[:,4]))
 			print(np.vstack([cart_e1,cart_e2,cart_e3]))
 			data = pd.DataFrame(np.vstack([cart_e1,cart_e2,cart_e3]), columns = ['x','y','z','energy'])
 			output = fclusterdata(data, t=distance_weight, criterion='distance',method="ward")
@@ -110,9 +112,9 @@ def run_threshold_finding(distance_weight,time_weight):
 			full_events = np.vstack([full_cart1,full_cart2,full_cart3])
 			output = np.reshape(output,(-1,1))	
 			full_events_cluster = np.append(full_events,output,axis=1)
-			#print("----- begin full cluster ----")
-			#print(full_events_cluster)
-			#print("----- end full cluster   ----")
+			print("----- begin full cluster ----")
+			print(full_events_cluster)
+			print("----- end full cluster   ----")
 			######make here selection criteria, no false positive
 			false_positive = False
 			exact_three_clusters = False

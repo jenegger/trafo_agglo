@@ -13,7 +13,8 @@ from scipy.cluster import hierarchy
 from numpy import genfromtxt
 from scipy.cluster.hierarchy import fclusterdata
 ##simulated data with peak at 2.1... MeV
-my_data = genfromtxt('data_stream_2121.txt', delimiter=',')
+#my_data = genfromtxt('data_stream_2121.txt', delimiter=',')
+my_data = genfromtxt('raw_data_test.txt', delimiter=',')
 #real data from 60Co source
 #my_data = genfromtxt('real_data_co60.txt', delimiter=',')
 my_data[:,4] = my_data[:,4]+4500  #this step is needed, I only want positive time values, so that I can use the time as a radius
@@ -45,6 +46,7 @@ arr_cluster_nr = []
 gamma_energy_distr = []
 def run_threshold_finding(distance_weight,time_weight):
         time_weight = time_weight/2.
+        #time_weight = 1.
         all_events = 0.
         well_reconstructed = 0.
         good_counts = 0
@@ -215,6 +217,8 @@ if __name__ == "__main__":
         #end = time.time()
         #print("TIME OF EXECUTION:\t",end -start)
         run_threshold_finding(3540,5)
+        #run_threshold_finding(3540,2)
+        #run_threshold_finding(1750,5)
         #run_threshold_finding(2800,2)
         #for i in range(1,40):
         #    for j in range(20,4000,20):

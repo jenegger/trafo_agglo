@@ -1,0 +1,33 @@
+/// order is: well reco, true_reco, false_pos, false_neg, false_mix
+/// 2.1 MeV Data
+r3bmodel: 0.858,0.718,0.060,0.159,0.062	
+agglo: 0.891,0.760,0.051,0.170,0.018
+edge-no-time: 
+edge-with-time:
+edge+agglo_var1:0.797,0.704,0.276,0.013,0.006
+edge+agglo_var2:0.937,0.894,0.064,0.027,0.014
+edge+r3b_var1:
+edge+r3b_var2:
+/// Uniform data, old version
+r3bmodel:
+agglo:
+edge-no-time
+edge-with-time:
+edge+agglo_var1:0.732,0.615,0.369,0.010,0.005
+edge+agglo_var2:0.889,0.839,0.141,0.013,0.008
+
+/// Uniform data - final version
+r3bmodel:0.804,0.603,0.054,0.255,0.087
+agglo:0.891,0.760,0.051,0.170,0.018
+edge-no-time
+edge-with-time:
+edge+agglo_var1:0.754,0.644,0.337,0.014,0.006
+edge+agglo_var2:0.898,0.846,0.126,0.018,0.010
+edge+r3b_var1:
+edge+r3b_var2:
+
+
+
+
+
+

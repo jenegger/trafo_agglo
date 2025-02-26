@@ -5,3 +5,4 @@ ff_scripted.pth
 data_raw_uniform_test.csv
 data_raw_uniform_training.csv
 data_stream_mult1_sim_uniform_window_0_3_10mev_0.000000.csv
+sim_data/
